@@ -862,44 +862,29 @@ namespace SpellEditor
         {
             if (!Config.IsInit)
             {
-                var settings = new MetroDialogSettings
+                if (Config.NeedInitMysql)
                 {
-                    AffirmativeButtonText = "SQLite",
-                    NegativeButtonText = "MySQL",
-                    AnimateHide = true,
-                    AnimateShow = true,
-                    ColorScheme = MetroDialogColorScheme.Accented
-                };
-                MessageDialogResult exitCode = await this.ShowMessageAsync(SafeTryFindResource("SpellEditor"),
-                    SafeTryFindResource("Welcome"),
-                    MessageDialogStyle.AffirmativeAndNegative, settings);
-                bool isSqlite = exitCode == MessageDialogResult.Affirmative;
-
-                if (!isSqlite)
-                {
-                    if (Config.NeedInitMysql)
-                    {
-                        string host = await this.ShowInputAsync(SafeTryFindResource("Input_MySQL_Details"), SafeTryFindResource("Input_MySQL_Details_1"));
-                        string user = await this.ShowInputAsync(SafeTryFindResource("Input_MySQL_Details"), SafeTryFindResource("Input_MySQL_Details_2"));
-                        string pass = await this.ShowInputAsync(SafeTryFindResource("Input_MySQL_Details"), SafeTryFindResource("Input_MySQL_Details_3"));
-                        string port = await this.ShowInputAsync(SafeTryFindResource("Input_MySQL_Details"), SafeTryFindResource("Input_MySQL_Details_4"));
-                        string db = await this.ShowInputAsync(SafeTryFindResource("Input_MySQL_Details"), SafeTryFindResource("Input_MySQL_Details_5"));
+                    string host = await this.ShowInputAsync(SafeTryFindResource("Input_MySQL_Details"), SafeTryFindResource("Input_MySQL_Details_1"));
+                    string user = await this.ShowInputAsync(SafeTryFindResource("Input_MySQL_Details"), SafeTryFindResource("Input_MySQL_Details_2"));
+                    string pass = await this.ShowInputAsync(SafeTryFindResource("Input_MySQL_Details"), SafeTryFindResource("Input_MySQL_Details_3"));
+                    string port = await this.ShowInputAsync(SafeTryFindResource("Input_MySQL_Details"), SafeTryFindResource("Input_MySQL_Details_4"));
+                    string db = await this.ShowInputAsync(SafeTryFindResource("Input_MySQL_Details"), SafeTryFindResource("Input_MySQL_Details_5"));
                         
-                        if (host == null || user == null || pass == null || port == null || db == null ||
-                            host.Length == 0 || user.Length == 0 || port.Length == 0 || db.Length == 0 ||
-                            !uint.TryParse(port, out var result))
-                        {
-                            throw new Exception(SafeTryFindResource("Input_MySQL_Error_2"));
-                        }
-
-                        Config.Host = host;
-                        Config.User = user;
-                        Config.Pass = pass;
-                        Config.Port = port;
-                        Config.Database = db;
+                    if (host == null || user == null || pass == null || port == null || db == null ||
+                        host.Length == 0 || user.Length == 0 || port.Length == 0 || db.Length == 0 ||
+                        !uint.TryParse(port, out var result))
+                    {
+                        throw new Exception(SafeTryFindResource("Input_MySQL_Error_2"));
                     }
+
+                    Config.Host = host;
+                    Config.User = user;
+                    Config.Pass = pass;
+                    Config.Port = port;
+                    Config.Database = db;
                 }
-                Config.connectionType = isSqlite ? Config.ConnectionType.SQLite : Config.ConnectionType.MySQL;
+
+                Config.connectionType = Config.ConnectionType.MySQL;
                 Config.IsInit = true;
             }
         }

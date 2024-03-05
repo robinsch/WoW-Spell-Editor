@@ -862,8 +862,23 @@ namespace SpellEditor
         {
             if (!Config.IsInit)
             {
+                bool isSqlite = false;
+
                 if (Config.NeedInitMysql)
                 {
+                    var settings = new MetroDialogSettings
+                    {
+                        AffirmativeButtonText = "SQLite",
+                        NegativeButtonText = "MySQL",
+                        AnimateHide = true,
+                        AnimateShow = true,
+                        ColorScheme = MetroDialogColorScheme.Accented
+                    };
+                    MessageDialogResult exitCode = await this.ShowMessageAsync(SafeTryFindResource("SpellEditor"),
+                        SafeTryFindResource("Welcome"),
+                        MessageDialogStyle.AffirmativeAndNegative, settings);
+                    isSqlite = exitCode == MessageDialogResult.Affirmative;
+
                     string host = await this.ShowInputAsync(SafeTryFindResource("Input_MySQL_Details"), SafeTryFindResource("Input_MySQL_Details_1"));
                     string user = await this.ShowInputAsync(SafeTryFindResource("Input_MySQL_Details"), SafeTryFindResource("Input_MySQL_Details_2"));
                     string pass = await this.ShowInputAsync(SafeTryFindResource("Input_MySQL_Details"), SafeTryFindResource("Input_MySQL_Details_3"));

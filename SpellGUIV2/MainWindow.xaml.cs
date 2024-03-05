@@ -172,6 +172,15 @@ namespace SpellEditor
                     Content = attFlag.Replace("_", "__"), ToolTip = attFlag, Margin = new Thickness(0, 5, 0, 0)
                 };
 
+                var contextMenu = new ContextMenu();
+                var copyName = new MenuItem
+                {
+                    Header = "Copy Name"
+                };
+                copyName.Click += (_sender, _args) => { Clipboard.SetText("SPELL_ATTR0_" + attFlag.Replace(" ", string.Empty)); };
+                contextMenu.Items.Add(copyName);
+                box.ContextMenu = contextMenu;
+
                 Attributes1.Children.Add(box);
                 attributes0.Add(box);
             }
@@ -185,6 +194,15 @@ namespace SpellEditor
                 {
                     Content = attFlag.Replace("_", "__"), ToolTip = attFlag, Margin = new Thickness(0, 5, 0, 0)
                 };
+
+                var contextMenu = new ContextMenu();
+                var copyName = new MenuItem
+                {
+                    Header = "Copy Name"
+                };
+                copyName.Click += (_sender, _args) => { Clipboard.SetText("SPELL_ATTR1_" + attFlag.Replace(" ", string.Empty)); }; 
+                contextMenu.Items.Add(copyName);
+                box.ContextMenu = contextMenu;
 
                 Attributes2.Children.Add(box);
                 attributes1.Add(box);
@@ -200,6 +218,15 @@ namespace SpellEditor
                     Content = attFlag.Replace("_", "__"), ToolTip = attFlag, Margin = new Thickness(0, 5, 0, 0)
                 };
 
+                var contextMenu = new ContextMenu();
+                var copyName = new MenuItem
+                {
+                    Header = "Copy Name"
+                };
+                copyName.Click += (_sender, _args) => { Clipboard.SetText("SPELL_ATTR2_" + attFlag.Replace(" ", string.Empty)); };
+                contextMenu.Items.Add(copyName);
+                box.ContextMenu = contextMenu;
+
                 Attributes3.Children.Add(box);
                 attributes2.Add(box);
             }
@@ -213,6 +240,15 @@ namespace SpellEditor
                 {
                     Content = attFlag.Replace("_", "__"), ToolTip = attFlag, Margin = new Thickness(0, 5, 0, 0)
                 };
+
+                var contextMenu = new ContextMenu();
+                var copyName = new MenuItem
+                {
+                    Header = "Copy Name"
+                };
+                copyName.Click += (_sender, _args) => { Clipboard.SetText("SPELL_ATTR3_" + attFlag.Replace(" ", string.Empty)); };
+                contextMenu.Items.Add(copyName);
+                box.ContextMenu = contextMenu;
 
                 Attributes4.Children.Add(box);
                 attributes3.Add(box);
@@ -228,6 +264,15 @@ namespace SpellEditor
                     Content = attFlag.Replace("_", "__"), ToolTip = attFlag, Margin = new Thickness(0, 5, 0, 0)
                 };
 
+                var contextMenu = new ContextMenu();
+                var copyName = new MenuItem
+                {
+                    Header = "Copy Name"
+                };
+                copyName.Click += (_sender, _args) => { Clipboard.SetText("SPELL_ATTR4_" + attFlag.Replace(" ", string.Empty)); };
+                contextMenu.Items.Add(copyName);
+                box.ContextMenu = contextMenu;
+
                 Attributes5.Children.Add(box);
                 attributes4.Add(box);
             }
@@ -241,6 +286,15 @@ namespace SpellEditor
                 {
                     Content = attFlag.Replace("_", "__"), ToolTip = attFlag, Margin = new Thickness(0, 5, 0, 0)
                 };
+
+                var contextMenu = new ContextMenu();
+                var copyName = new MenuItem
+                {
+                    Header = "Copy Name"
+                };
+                copyName.Click += (_sender, _args) => { Clipboard.SetText("SPELL_ATTR5_" + attFlag.Replace(" ", string.Empty)); };
+                contextMenu.Items.Add(copyName);
+                box.ContextMenu = contextMenu;
 
                 Attributes6.Children.Add(box);
                 attributes5.Add(box);
@@ -256,6 +310,15 @@ namespace SpellEditor
                     Content = attFlag.Replace("_", "__"), ToolTip = attFlag, Margin = new Thickness(0, 5, 0, 0)
                 };
 
+                var contextMenu = new ContextMenu();
+                var copyName = new MenuItem
+                {
+                    Header = "Copy Name"
+                };
+                copyName.Click += (_sender, _args) => { Clipboard.SetText("SPELL_ATTR6_" + attFlag.Replace(" ", string.Empty)); };
+                contextMenu.Items.Add(copyName);
+                box.ContextMenu = contextMenu;
+
                 Attributes7.Children.Add(box);
                 attributes6.Add(box);
             }
@@ -269,6 +332,15 @@ namespace SpellEditor
                 {
                     Content = attFlag.Replace("_", "__"), ToolTip = attFlag, Margin = new Thickness(0, 5, 0, 0)
                 };
+
+                var contextMenu = new ContextMenu();
+                var copyName = new MenuItem
+                {
+                    Header = "Copy Name"
+                };
+                copyName.Click += (_sender, _args) => { Clipboard.SetText("SPELL_ATTR7_" + attFlag.Replace(" ", string.Empty)); };
+                contextMenu.Items.Add(copyName);
+                box.ContextMenu = contextMenu;
 
                 Attributes8.Children.Add(box);
                 attributes7.Add(box);

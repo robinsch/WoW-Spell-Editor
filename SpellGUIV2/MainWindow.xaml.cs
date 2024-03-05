@@ -169,7 +169,7 @@ namespace SpellEditor
             {
                 ThreadSafeCheckBox box = new ThreadSafeCheckBox
                 {
-                    Content = attFlag, ToolTip = attFlag, Margin = new Thickness(0, 5, 0, 0)
+                    Content = attFlag.Replace("_", "__"), ToolTip = attFlag, Margin = new Thickness(0, 5, 0, 0)
                 };
 
                 Attributes1.Children.Add(box);
@@ -183,7 +183,7 @@ namespace SpellEditor
             {
                 ThreadSafeCheckBox box = new ThreadSafeCheckBox
                 {
-                    Content = attFlag, ToolTip = attFlag, Margin = new Thickness(0, 5, 0, 0)
+                    Content = attFlag.Replace("_", "__"), ToolTip = attFlag, Margin = new Thickness(0, 5, 0, 0)
                 };
 
                 Attributes2.Children.Add(box);
@@ -197,7 +197,7 @@ namespace SpellEditor
             {
                 ThreadSafeCheckBox box = new ThreadSafeCheckBox
                 {
-                    Content = attFlag, ToolTip = attFlag, Margin = new Thickness(0, 5, 0, 0)
+                    Content = attFlag.Replace("_", "__"), ToolTip = attFlag, Margin = new Thickness(0, 5, 0, 0)
                 };
 
                 Attributes3.Children.Add(box);
@@ -211,7 +211,7 @@ namespace SpellEditor
             {
                 ThreadSafeCheckBox box = new ThreadSafeCheckBox
                 {
-                    Content = attFlag, ToolTip = attFlag, Margin = new Thickness(0, 5, 0, 0)
+                    Content = attFlag.Replace("_", "__"), ToolTip = attFlag, Margin = new Thickness(0, 5, 0, 0)
                 };
 
                 Attributes4.Children.Add(box);
@@ -225,7 +225,7 @@ namespace SpellEditor
             {
                 ThreadSafeCheckBox box = new ThreadSafeCheckBox
                 {
-                    Content = attFlag, ToolTip = attFlag, Margin = new Thickness(0, 5, 0, 0)
+                    Content = attFlag.Replace("_", "__"), ToolTip = attFlag, Margin = new Thickness(0, 5, 0, 0)
                 };
 
                 Attributes5.Children.Add(box);
@@ -239,7 +239,7 @@ namespace SpellEditor
             {
                 ThreadSafeCheckBox box = new ThreadSafeCheckBox
                 {
-                    Content = attFlag, ToolTip = attFlag, Margin = new Thickness(0, 5, 0, 0)
+                    Content = attFlag.Replace("_", "__"), ToolTip = attFlag, Margin = new Thickness(0, 5, 0, 0)
                 };
 
                 Attributes6.Children.Add(box);
@@ -253,7 +253,7 @@ namespace SpellEditor
             {
                 ThreadSafeCheckBox box = new ThreadSafeCheckBox
                 {
-                    Content = attFlag, ToolTip = attFlag, Margin = new Thickness(0, 5, 0, 0)
+                    Content = attFlag.Replace("_", "__"), ToolTip = attFlag, Margin = new Thickness(0, 5, 0, 0)
                 };
 
                 Attributes7.Children.Add(box);
@@ -267,7 +267,7 @@ namespace SpellEditor
             {
                 ThreadSafeCheckBox box = new ThreadSafeCheckBox
                 {
-                    Content = attFlag, ToolTip = attFlag, Margin = new Thickness(0, 5, 0, 0)
+                    Content = attFlag.Replace("_", "__"), ToolTip = attFlag, Margin = new Thickness(0, 5, 0, 0)
                 };
 
                 Attributes8.Children.Add(box);

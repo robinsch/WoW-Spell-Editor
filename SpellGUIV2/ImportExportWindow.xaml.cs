@@ -21,7 +21,6 @@ using SpellEditor.Sources.Binding;
 using SpellEditor.Sources.Config;
 using SpellEditor.Sources.Database;
 using SpellEditor.Sources.DBC;
-using SpellEditor.Sources.Tools.MPQ;
 using Binding = SpellEditor.Sources.Binding.Binding;
 
 namespace SpellEditor
@@ -32,7 +31,6 @@ namespace SpellEditor
 
         private readonly IDatabaseAdapter _Adapter;
         private ConcurrentDictionary<int, ProgressBar> _TaskLookup;
-        private string _MpqArchiveName;
         private Action _PopulateSelectSpell;
         private Action _ReloadData;
         private readonly string _SpellBindingName = "Spell";
@@ -57,7 +55,6 @@ namespace SpellEditor
         {
             Application.Current.DispatcherUnhandledException += App_DispatcherUnhandledException;
             BuildImportExportTab();
-            ExportMpqNameTxt.Text = string.IsNullOrEmpty(Config.DefaultMpqName) ? "patch-4.MPQ" : Config.DefaultMpqName;
         }
 
         private bool IsDefaultImport(string name)
@@ -178,14 +175,6 @@ namespace SpellEditor
             }));
         }
 
-        private void MpqClick(object sender, RoutedEventArgs e)
-        {
-            var archiveName = ExportMpqNameTxt.Text.Length > 0 ? ExportMpqNameTxt.Text : "empty.mpq";
-            archiveName = archiveName.EndsWith(".mpq") ? archiveName : archiveName + ".mpq";
-            _MpqArchiveName = archiveName;
-            ClickHandler(false);
-        }
-
         private void ImportClick(object sender, RoutedEventArgs e) => ClickHandler(true);
         private void ExportClick(object sender, RoutedEventArgs e) => ClickHandler(false);
         private void ClickHandler(bool isImport)
@@ -217,7 +206,6 @@ namespace SpellEditor
             // Now we want to disable the UI elements and update the progress bars
             ImportClickBtn.IsEnabled = false;
             ExportClickBtn1.IsEnabled = false;
-            ExportClickBtn2.IsEnabled = false;
 
             doImportExport(isImport, bindingNameList, useType);
         }
@@ -313,18 +301,6 @@ namespace SpellEditor
                     adapters.Clear();
                 }
 
-                // Create MPQ if required
-                if (!string.IsNullOrEmpty(_MpqArchiveName))
-                {
-                    var exportList = new List<string>();
-                    Directory.EnumerateFiles("Export")
-                        .Where((dbcFile) => dbcFile.EndsWith(".dbc"))
-                        .ToList()
-                        .ForEach(exportList.Add);
-                    var mpqExport = new MpqExport();
-                    mpqExport.CreateMpqFromDbcFileList(_MpqArchiveName, exportList);
-                }
-
                 // Reset
                 Dispatcher.InvokeAsync(new Action(() =>
                 {
@@ -335,7 +311,6 @@ namespace SpellEditor
                     });
                     ImportClickBtn.IsEnabled = true;
                     ExportClickBtn1.IsEnabled = true;
-                    ExportClickBtn2.IsEnabled = true;
                     _TaskLookup = new ConcurrentDictionary<int, ProgressBar>();
                 }));
 

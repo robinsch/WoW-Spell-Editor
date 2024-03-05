@@ -198,7 +198,6 @@
     <Compile Include="Sources\DBC\MutableGenericDbc.cs" />
     <Compile Include="Sources\DBC\SpellVisualKitModelAttach.cs" />
     <Compile Include="Sources\Locale\LocaleManager.cs" />
-    <Compile Include="Sources\Tools\MPQ\MpqExport.cs" />
     <Compile Include="Sources\Tools\VisualTools\VisualController.cs" />
     <Compile Include="Sources\Tools\VisualTools\VisualMapBuilder.cs" />
     <Compile Include="Sources\VersionControl\WoWVersion.cs" />
@@ -306,12 +305,6 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\stormlibsharp\src\StormLibSharp\StormLibSharp.csproj">
-      <Project>{D0139C61-6BA0-4F07-B1E8-551023CD2624}</Project>
-      <Name>StormLibSharp</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Costura32\StormLib.dll" />

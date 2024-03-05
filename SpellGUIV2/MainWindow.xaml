@@ -731,31 +731,6 @@
             <TabItem Header="{DynamicResource Flags}">
                 <Grid>
                     <TabControl VerticalAlignment="Top" HorizontalAlignment="Left">
-                        <TabItem Header="{DynamicResource Interrupts}">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="AUTO"/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Label Content="{DynamicResource labInterruptFlags}" HorizontalAlignment="Center" Margin="10" Grid.Row="0" Grid.Column="0"/>
-                                <ScrollViewer Margin="10" ScrollViewer.VerticalScrollBarVisibility="Disabled" Grid.Row="1" Grid.Column="0">
-                                    <StackPanel Name="InterruptFlagsGrid"/>
-                                </ScrollViewer>
-                                <Label Content="{DynamicResource labAuraInterruptFlags}" HorizontalAlignment="Center" Margin="10" Grid.Row="0" Grid.Column="1"/>
-                                <ScrollViewer Margin="30,10,10,10" Grid.Row="1" Grid.Column="1">
-                                    <StackPanel Name="AuraInterruptFlagsGrid"/>
-                                </ScrollViewer>
-                                <Label Content="{DynamicResource labChannelInterruptFlags}" HorizontalAlignment="Center" Margin="10" Grid.Row="0" Grid.Column="2"/>
-                                <ScrollViewer Margin="30,10,10,10" ScrollViewer.VerticalScrollBarVisibility="Disabled" Grid.Row="1" Grid.Column="2">
-                                    <StackPanel Name="ChannelInterruptFlagsGrid"/>
-                                </ScrollViewer>
-                            </Grid>
-                        </TabItem>
                         <TabItem Header="{DynamicResource Attributes}">
                             <Grid Name="AttributesTabGrid">
                                 <Grid.RowDefinitions>
@@ -813,6 +788,31 @@
                                 <Label Content="{DynamicResource labAttributesEx7}" HorizontalAlignment="Center" Margin="10" Grid.Row="0" Grid.Column="3"/>
                                 <ScrollViewer Margin="10" Grid.Row="1" Grid.Column="3">
                                     <StackPanel x:Name="Attributes8"/>
+                                </ScrollViewer>
+                            </Grid>
+                        </TabItem>
+                        <TabItem Header="{DynamicResource Interrupts}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="AUTO"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Content="{DynamicResource labInterruptFlags}" HorizontalAlignment="Center" Margin="10" Grid.Row="0" Grid.Column="0"/>
+                                <ScrollViewer Margin="10" ScrollViewer.VerticalScrollBarVisibility="Disabled" Grid.Row="1" Grid.Column="0">
+                                    <StackPanel Name="InterruptFlagsGrid"/>
+                                </ScrollViewer>
+                                <Label Content="{DynamicResource labAuraInterruptFlags}" HorizontalAlignment="Center" Margin="10" Grid.Row="0" Grid.Column="1"/>
+                                <ScrollViewer Margin="30,10,10,10" Grid.Row="1" Grid.Column="1">
+                                    <StackPanel Name="AuraInterruptFlagsGrid"/>
+                                </ScrollViewer>
+                                <Label Content="{DynamicResource labChannelInterruptFlags}" HorizontalAlignment="Center" Margin="10" Grid.Row="0" Grid.Column="2"/>
+                                <ScrollViewer Margin="30,10,10,10" ScrollViewer.VerticalScrollBarVisibility="Disabled" Grid.Row="1" Grid.Column="2">
+                                    <StackPanel Name="ChannelInterruptFlagsGrid"/>
                                 </ScrollViewer>
                             </Grid>
                         </TabItem>

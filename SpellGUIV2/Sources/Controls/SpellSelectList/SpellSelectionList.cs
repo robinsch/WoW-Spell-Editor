@@ -120,18 +120,18 @@ namespace SpellEditor.Sources.Controls
         public void AddNewSpell(uint copyFrom, uint copyTo)
         {
             // Copy spell in DB
-            using (var result = _Adapter.Query($"SELECT * FROM `spell` WHERE `ID` = '{copyFrom}' LIMIT 1"))
+            using (var result = _Adapter.Query($"SELECT * FROM `spell_dbc` WHERE `ID` = '{copyFrom}' LIMIT 1"))
             {
                 var row = result.Rows[0];
                 var str = new StringBuilder();
-                str.Append($"INSERT INTO `spell` VALUES ('{copyTo}'");
+                str.Append($"INSERT INTO `spell_dbc` VALUES ('{copyTo}'");
                 for (int i = 1; i < row.Table.Columns.Count; ++i)
                     str.Append($", \"{row[i]}\"");
                 str.Append(")");
                 _Adapter.Execute(str.ToString());
             }
             // Merge result with spell list
-            using (var result = _Adapter.Query($"SELECT `id`,`SpellName{_Language - 1}`,`SpellIconID`,`SpellRank{_Language - 1}` FROM `spell` WHERE `ID` = '{copyTo}' LIMIT 1"))
+            using (var result = _Adapter.Query($"SELECT `id`,`SpellName{_Language - 1}`,`SpellIconID`,`SpellRank{_Language - 1}` FROM `spell_dbc` WHERE `ID` = '{copyTo}' LIMIT 1"))
             {
                 _Table.Merge(result, false, MissingSchemaAction.Add);
                 _Table.AcceptChanges();
@@ -170,7 +170,7 @@ namespace SpellEditor.Sources.Controls
         public void DeleteSpell(uint spellId)
         {
             // Delete from DB
-            _Adapter.Execute($"DELETE FROM `spell` WHERE `ID` = '{spellId}'");
+            _Adapter.Execute($"DELETE FROM `spell_dbc` WHERE `ID` = '{spellId}'");
             // Delete from spell list
             _Table.Select($"id = {spellId}").First().Delete();
             _Table.AcceptChanges();
@@ -252,7 +252,7 @@ namespace SpellEditor.Sources.Controls
         {
             using (var newSpellNames = _Adapter.Query(
                 string.Format(@"SELECT `id`,`SpellName{1}`,`SpellIconID`,`SpellRank{1}` FROM `{0}` ORDER BY `id` LIMIT {2}, {3}",
-                 "spell", locale, lowerBound, pageSize)))
+                 "spell_dbc", locale, lowerBound, pageSize)))
             {
                 _Table.Merge(newSpellNames, false, MissingSchemaAction.Add);
                 _Table.AcceptChanges();

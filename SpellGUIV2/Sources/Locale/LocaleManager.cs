@@ -31,7 +31,7 @@ namespace SpellEditor.Sources.Locale
             var aboveClassic = WoWVersionManager.GetInstance().SelectedVersion().Identity > 112;
             var name8 = aboveClassic ? ",`SpellName8` " : "";
             using (var res = adapter.Query("SELECT `id`,`SpellName0`,`SpellName1`,`SpellName2`,`SpellName3`,`SpellName4`," +
-                "`SpellName5`,`SpellName6`,`SpellName7`" + name8 + " FROM `spell` WHERE `ID` = '5'"))
+                "`SpellName5`,`SpellName6`,`SpellName7`" + name8 + " FROM `spell_dbc` WHERE `ID` = '5'"))
             {
                 var rows = res.Rows;
                 if (rows.Count == 0)

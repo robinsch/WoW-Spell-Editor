@@ -84,7 +84,7 @@ namespace SpellEditor.Sources.DBC
             
             // Convert to background worker here
 
-            var container = adapter.Query(string.Format("SELECT `SpellIconID`,`ActiveIconID` FROM `{0}` WHERE `ID` = '{1}'", "spell", main.selectedID));
+            var container = adapter.Query(string.Format("SELECT `SpellIconID`,`ActiveIconID` FROM `{0}` WHERE `ID` = '{1}'", "spell_dbc", main.selectedID));
             if (container == null || container.Rows.Count == 0)
             {
                 return;

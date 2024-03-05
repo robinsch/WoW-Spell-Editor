@@ -477,22 +477,6 @@
                 <TabControl VerticalAlignment="Top" HorizontalAlignment="Left" Margin="-5,0,-230,-15" Height="659" Width="1280">
                     <TabItem Header="{DynamicResource Effects1}">
                         <Grid>
-                            <Label Content="{DynamicResource labTargets}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="130,10,0,0"/>
-                            <ScrollViewer Margin="7,41,962,38">
-                                <StackPanel Name="TargetEditorGrid"/>
-                            </ScrollViewer>
-                            <Label Content="{DynamicResource labProcs}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="590,18,0,0"/>
-                            <ScrollViewer Margin="456,49,478,38">
-                                <StackPanel Name="ProcEditorGrid"/>
-                            </ScrollViewer>
-                            <Label Content="{DynamicResource labProcCharges}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="820,160,0,0"/>
-                            <c2:ThreadSafeTextBox x:Name="ProcCharges" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="817.5,186,0,0" Width="90" TextWrapping="Wrap"/>
-                            <Label Content="{DynamicResource labProcChance}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="820,236,0,0"/>
-                            <c2:ThreadSafeTextBox x:Name="ProcChance" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="817.5,262,0,0" Width="90" TextWrapping="Wrap"/>
-                        </Grid>
-                    </TabItem>
-                    <TabItem Header="{DynamicResource Effects2}">
-                        <Grid>
                             <TabControl VerticalAlignment="Top" HorizontalAlignment="Left" Height="647" Width="1276">
                                 <TabItem Header="{DynamicResource SpellEffects1}">
                                     <Grid>
@@ -651,6 +635,22 @@
                                     </Grid>
                                 </TabItem>
                             </TabControl>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="{DynamicResource Effects2}">
+                        <Grid>
+                            <Label Content="{DynamicResource labTargets}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="130,10,0,0"/>
+                            <ScrollViewer Margin="7,41,962,38">
+                                <StackPanel Name="TargetEditorGrid"/>
+                            </ScrollViewer>
+                            <Label Content="{DynamicResource labProcs}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="590,18,0,0"/>
+                            <ScrollViewer Margin="456,49,478,38">
+                                <StackPanel Name="ProcEditorGrid"/>
+                            </ScrollViewer>
+                            <Label Content="{DynamicResource labProcCharges}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="820,160,0,0"/>
+                            <c2:ThreadSafeTextBox x:Name="ProcCharges" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="817.5,186,0,0" Width="90" TextWrapping="Wrap"/>
+                            <Label Content="{DynamicResource labProcChance}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="820,236,0,0"/>
+                            <c2:ThreadSafeTextBox x:Name="ProcChance" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="817.5,262,0,0" Width="90" TextWrapping="Wrap"/>
                         </Grid>
                     </TabItem>
                 </TabControl>

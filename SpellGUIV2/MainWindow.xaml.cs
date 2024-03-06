@@ -490,6 +490,24 @@ namespace SpellEditor
                 SpellEffect1.Items.Add(effectName);
                 SpellEffect2.Items.Add(effectName);
                 SpellEffect3.Items.Add(effectName);
+
+                var contextMenu1 = new ContextMenu();
+                var contextMenu2 = new ContextMenu();
+                var contextMenu3 = new ContextMenu();
+                var copyName1 = new MenuItem { Header = "Copy Name" };
+                var copyName2 = new MenuItem { Header = "Copy Name" };
+                var copyName3 = new MenuItem { Header = "Copy Name" };
+                copyName1.Click += (_sender, _args) => { Clipboard.SetText("EFFECT_" + spell_effect_names[SpellEffect1.SelectedIndex].Replace(" ", String.Empty)); };
+                copyName2.Click += (_sender, _args) => { Clipboard.SetText("EFFECT_" + spell_effect_names[SpellEffect2.SelectedIndex].Replace(" ", String.Empty)); };
+                copyName3.Click += (_sender, _args) => { Clipboard.SetText("EFFECT_" + spell_effect_names[SpellEffect3.SelectedIndex].Replace(" ", String.Empty)); };
+                contextMenu1.Items.Add(copyName1);
+                contextMenu2.Items.Add(copyName2);
+                contextMenu3.Items.Add(copyName3);
+
+                SpellEffect1.ContextMenu = contextMenu1;
+                SpellEffect2.ContextMenu = contextMenu2;
+                SpellEffect3.ContextMenu = contextMenu3;
+
                 FilterSpellEffectCombo.Items.Add(effectName);
             }
 

@@ -11,7 +11,8 @@
         WindowStartupLocation="CenterScreen"
         Icon="icon.ico"
         KeyDown="_KeyDown"
-        Loaded="_Loaded">
+        Loaded="_Loaded"
+        WindowTitleBrush="Gray">
     <controls:MetroWindow.Resources>
         <ResourceDictionary>
             <Style TargetType="c2:ThreadSafeComboBox" BasedOn="{StaticResource {x:Type ComboBox}}"/>

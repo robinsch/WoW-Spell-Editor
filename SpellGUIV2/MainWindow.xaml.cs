@@ -15,6 +15,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
@@ -1756,7 +1757,13 @@ namespace SpellEditor
                     row.EndEdit();
                     adapter.CommitChanges(query, q.GetChanges());
 
-                    ShowFlyoutMessage($"Saved spell {selectedID}.");
+                    WindowTitleBrush = new SolidColorBrush(Colors.Green);
+
+                    _ = Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+                    {
+                        Thread.Sleep(1000);
+                        WindowTitleBrush = new SolidColorBrush(Colors.Gray);
+                    }));
 
                     SelectSpell.UpdateSpell(row);
                 }

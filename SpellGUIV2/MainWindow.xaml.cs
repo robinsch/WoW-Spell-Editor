@@ -1757,13 +1757,7 @@ namespace SpellEditor
                     row.EndEdit();
                     adapter.CommitChanges(query, q.GetChanges());
 
-                    WindowTitleBrush = new SolidColorBrush(Colors.Green);
-
-                    _ = Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
-                    {
-                        Thread.Sleep(1000);
-                        WindowTitleBrush = new SolidColorBrush(Colors.Gray);
-                    }));
+                    ShowFlyoutMessage($"Saved spell {selectedID}.", 14, 35.0f, 220.0f);
 
                     SelectSpell.UpdateSpell(row);
                 }
@@ -1810,10 +1804,15 @@ namespace SpellEditor
         #endregion
 
         #region Utilities
-        public void ShowFlyoutMessage(string message)
+        public void ShowFlyoutMessage(string message, int fontSize = 16, float maxHeight = 0.0f, float maxWidth = 0.0f)
         {
             Flyout.IsOpen = true;
             FlyoutText.Text = message;
+            FlyoutText.FontSize = fontSize;
+            if (maxWidth != 0.0f)
+                Flyout.Height = maxHeight;
+            if (maxWidth != 0.0f)
+                Flyout.Width = maxWidth;
         }
 
         public static T DeepCopy<T>(T obj)

@@ -221,6 +221,7 @@ namespace SpellEditor
             grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+                  grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
 
             row = 0;
 
@@ -234,7 +235,9 @@ namespace SpellEditor
             var portText = new TextBox { Text = Config.Port, MinWidth = 200 };
             var databaseLabel = new Label { Content = "Database: " };
             var databaseText = new TextBox { Text = Config.Database, MinWidth = 200 };
-            var confirmBtn = new MySQLConfirmButton(hostText, userText, passText, portText, databaseText)
+            var spellTableLabel = new Label { Content = "Spell Table: " };
+            var spellTableText = new TextBox { Text = Config.SpellTable, MinWidth = 200 };
+            var confirmBtn = new MySQLConfirmButton(hostText, userText, passText, portText, databaseText, spellTableText)
             {
                 Content = "Save Changes",
                 Foreground = Brushes.Black
@@ -252,6 +255,8 @@ namespace SpellEditor
             portText.Margin = margin;
             databaseLabel.Margin = margin;
             databaseText.Margin = margin;
+            spellTableLabel.Margin = margin;
+            spellTableText.Margin = margin;
             confirmBtn.Margin = new Thickness(3, 10, 3, 2);
             confirmBtn.MinHeight = 40;
 
@@ -275,6 +280,10 @@ namespace SpellEditor
             Grid.SetColumn(databaseLabel, 0);
             Grid.SetRow(databaseText, row++);
             Grid.SetColumn(databaseText, 1);
+            Grid.SetRow(spellTableLabel, row);
+            Grid.SetColumn(spellTableLabel, 0);
+            Grid.SetRow(spellTableText, row++);
+            Grid.SetColumn(spellTableText, 1);
             Grid.SetRow(confirmBtn, row++);
             Grid.SetColumn(confirmBtn, 1);
 
@@ -288,6 +297,8 @@ namespace SpellEditor
             grid.Children.Add(portText);
             grid.Children.Add(databaseLabel);
             grid.Children.Add(databaseText);
+            grid.Children.Add(spellTableLabel);
+            grid.Children.Add(spellTableText);
             grid.Children.Add(confirmBtn);
 
             ConfigGrid.Children.Add(grid);
@@ -302,6 +313,7 @@ namespace SpellEditor
             Config.Pass = button.Pass();
             Config.Port = button.Port();
             Config.Database = button.Database();
+            Config.SpellTable = button.SpellTable();
             Config.DefaultMpqName = _MpqNameText.Text;
             ShowFlyoutMessage("Saved config.xml - Changes will be loaded on next program startup");
         }
@@ -513,15 +525,16 @@ namespace SpellEditor
 
         private class MySQLConfirmButton : Button
         {
-            private readonly TextBox _Host, _User, _Pass, _Port, _Database;
+            private readonly TextBox _Host, _User, _Pass, _Port, _Database, _SpellTable;
 
-            public MySQLConfirmButton(TextBox host, TextBox user, TextBox pass, TextBox port, TextBox database)
+            public MySQLConfirmButton(TextBox host, TextBox user, TextBox pass, TextBox port, TextBox database, TextBox spellTable)
             {
                 _Host = host;
                 _User = user;
                 _Pass = pass;
                 _Port = port;
                 _Database = database;
+                _SpellTable = spellTable;
             }
 
             public string Host() => _Host.Text;
@@ -533,6 +546,8 @@ namespace SpellEditor
             public string Port() => _Port.Text;
 
             public string Database() => _Database.Text;
+
+            public string SpellTable() => _SpellTable.Text;
         }
 
         private class SQLiteConfirmButton : Button

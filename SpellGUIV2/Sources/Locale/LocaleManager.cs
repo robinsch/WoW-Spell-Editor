@@ -30,8 +30,8 @@ namespace SpellEditor.Sources.Locale
             // Attempt localisation on Death Touch, HACKY
             var aboveClassic = WoWVersionManager.GetInstance().SelectedVersion().Identity > 112;
             var name8 = aboveClassic ? ",`SpellName8` " : "";
-            using (var res = adapter.Query("SELECT `id`,`SpellName0`,`SpellName1`,`SpellName2`,`SpellName3`,`SpellName4`," +
-                "`SpellName5`,`SpellName6`,`SpellName7`" + name8 + " FROM `spell_dbc` WHERE `ID` = '5'"))
+            using (var res = adapter.Query(string.Format("SELECT `id`,`SpellName0`,`SpellName1`,`SpellName2`,`SpellName3`,`SpellName4`," +
+                "`SpellName5`,`SpellName6`,`SpellName7`" + name8 + " FROM `{0}` WHERE `ID` = '5'", Config.Config.SpellTable)))
             {
                 var rows = res.Rows;
                 if (rows.Count == 0)

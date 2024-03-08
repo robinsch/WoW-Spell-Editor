@@ -81,7 +81,7 @@ namespace SpellEditor.Sources.DBC
                         var difficulty = record["Difficulties" + diffIndex].ToString();
                         content += difficulty + ", ";
                         tooltip += "[" + difficulty + "] ";
-                        var result = adapter.QuerySingleValue(string.Format("SELECT {0} FROM `{1}` WHERE `ID` = '{2}' LIMIT 1", column, "spell_dbc", difficulty));
+                        var result = adapter.QuerySingleValue(string.Format("SELECT {0} FROM `{1}` WHERE `ID` = '{2}' LIMIT 1", column, Config.Config.SpellTable, difficulty));
                         if (result != null)
                         {
                             tooltip += result.ToString();

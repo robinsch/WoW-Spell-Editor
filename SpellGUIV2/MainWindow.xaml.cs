@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
@@ -970,14 +971,15 @@ namespace SpellEditor
                         MessageDialogStyle.AffirmativeAndNegative, settings);
                     isSqlite = exitCode == MessageDialogResult.Affirmative;
 
-                    string host = await this.ShowInputAsync(SafeTryFindResource("Input_MySQL_Details"), SafeTryFindResource("Input_MySQL_Details_1"));
-                    string user = await this.ShowInputAsync(SafeTryFindResource("Input_MySQL_Details"), SafeTryFindResource("Input_MySQL_Details_2"));
-                    string pass = await this.ShowInputAsync(SafeTryFindResource("Input_MySQL_Details"), SafeTryFindResource("Input_MySQL_Details_3"));
-                    string port = await this.ShowInputAsync(SafeTryFindResource("Input_MySQL_Details"), SafeTryFindResource("Input_MySQL_Details_4"));
-                    string db = await this.ShowInputAsync(SafeTryFindResource("Input_MySQL_Details"), SafeTryFindResource("Input_MySQL_Details_5"));
-                        
-                    if (host == null || user == null || pass == null || port == null || db == null ||
-                        host.Length == 0 || user.Length == 0 || port.Length == 0 || db.Length == 0 ||
+                    string host = await this.ShowInputAsync(SafeTryFindResource("Input_MySQL_Details"), SafeTryFindResource("Input_MySQL_Details_1"), new MetroDialogSettings { DefaultText = "localhost" });
+                    string user = await this.ShowInputAsync(SafeTryFindResource("Input_MySQL_Details"), SafeTryFindResource("Input_MySQL_Details_2"), new MetroDialogSettings { DefaultText = "trinity" });
+                    string pass = await this.ShowInputAsync(SafeTryFindResource("Input_MySQL_Details"), SafeTryFindResource("Input_MySQL_Details_3"), new MetroDialogSettings { DefaultText = "trinity" });
+                    string port = await this.ShowInputAsync(SafeTryFindResource("Input_MySQL_Details"), SafeTryFindResource("Input_MySQL_Details_4"), new MetroDialogSettings { DefaultText = "3306" });
+                    string db = await this.ShowInputAsync(SafeTryFindResource("Input_MySQL_Details"), SafeTryFindResource("Input_MySQL_Details_5"), new MetroDialogSettings { DefaultText = "world" });
+                    string spellTable = await this.ShowInputAsync(SafeTryFindResource("Input_MySQL_Details"), SafeTryFindResource("Input_MySQL_Details_6"), new MetroDialogSettings { DefaultText = "spell" });
+
+                    if (host == null || user == null || pass == null || port == null || db == null || spellTable == null ||
+                        host.Length == 0 || user.Length == 0 || port.Length == 0 || db.Length == 0 || spellTable.Length == 0 ||
                         !uint.TryParse(port, out var result))
                     {
                         throw new Exception(SafeTryFindResource("Input_MySQL_Error_2"));
@@ -988,6 +990,7 @@ namespace SpellEditor
                     Config.Pass = pass;
                     Config.Port = port;
                     Config.Database = db;
+                    Config.SpellTable = spellTable;
                 }
 
                 Config.connectionType = Config.ConnectionType.MySQL;
@@ -1180,7 +1183,7 @@ namespace SpellEditor
                     return;
                 }
 
-                if (uint.Parse(adapter.Query($"SELECT COUNT(*) FROM `spell_dbc` WHERE `ID` = '{newID}'").Rows[0][0].ToString()) > 0)
+                if (uint.Parse(adapter.Query($"SELECT COUNT(*) FROM `{Config.SpellTable}` WHERE `ID` = '{newID}'").Rows[0][0].ToString()) > 0)
                 {
                     HandleErrorMessage(SafeTryFindResource("CopySpellRecord6"));
                     return;
@@ -1224,7 +1227,7 @@ namespace SpellEditor
 
             if (sender == SaveSpellChanges)
             {
-                string query = $"SELECT * FROM `spell_dbc` WHERE `ID` = '{selectedID}' LIMIT 1";
+                string query = $"SELECT * FROM `{Config.SpellTable}` WHERE `ID` = '{selectedID}' LIMIT 1";
                 var q = adapter.Query(query);
                 if (q.Rows.Count == 0)
                     return;
@@ -1804,18 +1807,18 @@ namespace SpellEditor
                     column = "SpellIconID";
                 else if (spellOrActive == MessageDialogResult.Negative)
                     column = "ActiveIconID";
-                adapter.Execute($"UPDATE `{"spell_dbc"}` SET `{column}` = '{newIconID}' WHERE `ID` = '{selectedID}'");
+                adapter.Execute($"UPDATE `{Config.SpellTable}` SET `{column}` = '{newIconID}' WHERE `ID` = '{selectedID}'");
                 return;
             }
 
             if (sender == ResetSpellIconID)
             {
-                adapter.Execute($"UPDATE `{"spell_dbc"}` SET `{"SpellIconID"}` = '{1}' WHERE `ID` = '{selectedID}'");
+                adapter.Execute($"UPDATE `{Config.SpellTable}` SET `{"SpellIconID"}` = '{1}' WHERE `ID` = '{selectedID}'");
                 return;
             }
             if (sender == ResetActiveIconID)
             {
-                adapter.Execute($"UPDATE `{"spell_dbc"}` SET `{"ActiveIconID"}` = '{0}' WHERE `ID` = '{selectedID}'");
+                adapter.Execute($"UPDATE `{Config.SpellTable}` SET `{"ActiveIconID"}` = '{0}' WHERE `ID` = '{selectedID}'");
             }
         }
 
@@ -1883,7 +1886,7 @@ namespace SpellEditor
                 column = "SpellIconID";
             else if (spellOrActive == MessageDialogResult.Negative)
                 column = "ActiveIconID";
-            adapter.Execute($"UPDATE `{"spell_dbc"}` SET `{column}` = '{newIconID}' WHERE `ID` = '{selectedID}'");
+            adapter.Execute($"UPDATE `{Config.SpellTable}` SET `{column}` = '{newIconID}' WHERE `ID` = '{selectedID}'");
         }
 
         private async void UpdateMainWindow()
@@ -1920,7 +1923,7 @@ namespace SpellEditor
          */
         private void DebugFuncWriteAllUnparsedStrings()
         {
-            DataRowCollection rowResult = adapter.Query(string.Format("SELECT SpellDescription0 || SpellTooltip0 FROM `spell_dbc`", selectedID)).Rows;
+            DataRowCollection rowResult = adapter.Query(string.Format("SELECT SpellDescription0 || SpellTooltip0 FROM `{0}`", Config.SpellTable)).Rows;
             if (rowResult == null || rowResult.Count == 0)
                 throw new Exception("An error occurred trying to select spell ID: " + selectedID);
             var unparsedStrings = new List<string>();
@@ -2013,7 +2016,7 @@ namespace SpellEditor
             _currentVisualController = null;
             adapter.Updating = true;
             updateProgress("Querying MySQL data...");
-            var data = adapter.Query($"SELECT * FROM `spell_dbc` WHERE `ID` = '{selectedID}'");
+            var data = adapter.Query($"SELECT * FROM `{Config.SpellTable}` WHERE `ID` = '{selectedID}'");
             var rowResult = data.Rows;
             if (rowResult == null || rowResult.Count != 1)
                 throw new Exception("An error occurred trying to select spell ID: " + selectedID);
@@ -2057,15 +2060,15 @@ namespace SpellEditor
                 updateProgress("Updating category & dispel & mechanic...");
                 var loadCategories = (SpellCategory)DBCManager.GetInstance().FindDbcForBinding("SpellCategory");
                 Category.ThreadSafeIndex = loadCategories.UpdateCategorySelection(uint.Parse(
-                    adapter.Query($"SELECT `Category` FROM `{"spell_dbc"}` WHERE `ID` = '{selectedID}'").Rows[0][0].ToString()));
+                    adapter.Query($"SELECT `Category` FROM `{Config.SpellTable}` WHERE `ID` = '{selectedID}'").Rows[0][0].ToString()));
 
                 var loadDispels = (SpellDispelType)DBCManager.GetInstance().FindDbcForBinding("SpellDispelType");
                 DispelType.ThreadSafeIndex = loadDispels.UpdateDispelSelection(uint.Parse(
-                    adapter.Query($"SELECT `Dispel` FROM `{"spell_dbc"}` WHERE `ID` = '{selectedID}'").Rows[0][0].ToString()));
+                    adapter.Query($"SELECT `Dispel` FROM `{Config.SpellTable}` WHERE `ID` = '{selectedID}'").Rows[0][0].ToString()));
 
                 var loadMechanics = (SpellMechanic)DBCManager.GetInstance().FindDbcForBinding("SpellMechanic");
                 MechanicType.SelectedIndex = loadMechanics.UpdateMechanicSelection(uint.Parse(
-                    adapter.Query($"SELECT `Mechanic` FROM `{"spell_dbc"}` WHERE `ID` = '{selectedID}'").Rows[0][0].ToString()));
+                    adapter.Query($"SELECT `Mechanic` FROM `{Config.SpellTable}` WHERE `ID` = '{selectedID}'").Rows[0][0].ToString()));
 
                 updateProgress("Updating attributes...");
                 uint mask = uint.Parse(row["Attributes"].ToString());
@@ -2205,7 +2208,7 @@ namespace SpellEditor
                 updateProgress("Updating spell focus object selection...");
                 var loadFocusObjects = (SpellFocusObject)DBCManager.GetInstance().FindDbcForBinding("SpellFocusObject");
                 RequiresSpellFocus.ThreadSafeIndex = loadFocusObjects.UpdateSpellFocusObjectSelection(uint.Parse(
-                    adapter.Query($"SELECT `RequiresSpellFocus` FROM `{"spell_dbc"}` WHERE `ID` = '{selectedID}'").Rows[0][0].ToString()));
+                    adapter.Query($"SELECT `RequiresSpellFocus` FROM `{Config.SpellTable}` WHERE `ID` = '{selectedID}'").Rows[0][0].ToString()));
 
                 if (isTbcOrGreater)
                 {
@@ -2285,7 +2288,7 @@ namespace SpellEditor
                 updateProgress("Updating cast time selection...");
                 var loadCastTimes = (SpellCastTimes)DBCManager.GetInstance().FindDbcForBinding("SpellCastTimes");
                 CastTime.ThreadSafeIndex = loadCastTimes.UpdateCastTimeSelection(uint.Parse(adapter.Query(
-                    $"SELECT `CastingTimeIndex` FROM `{"spell_dbc"}` WHERE `ID` = '{selectedID}'").Rows[0][0].ToString()));
+                    $"SELECT `CastingTimeIndex` FROM `{Config.SpellTable}` WHERE `ID` = '{selectedID}'").Rows[0][0].ToString()));
                 updateProgress("Updating other stuff...");
                 RecoveryTime.ThreadSafeText = uint.Parse(row["RecoveryTime"].ToString());
                 CategoryRecoveryTime.ThreadSafeText = uint.Parse(row["CategoryRecoveryTime"].ToString());
@@ -2367,7 +2370,7 @@ namespace SpellEditor
 
                 var loadDurations = (SpellDuration)DBCManager.GetInstance().FindDbcForBinding("SpellDuration");
                 Duration.ThreadSafeIndex = loadDurations.UpdateDurationIndexes(uint.Parse(adapter.Query(
-                    $"SELECT `DurationIndex` FROM `{"spell_dbc"}` WHERE `ID` = '{selectedID}'").Rows[0][0].ToString()));
+                    $"SELECT `DurationIndex` FROM `{Config.SpellTable}` WHERE `ID` = '{selectedID}'").Rows[0][0].ToString()));
 
                 uint powerType = uint.Parse(row["PowerType"].ToString());
                 // Manually handle 'Health' power type
@@ -2390,7 +2393,7 @@ namespace SpellEditor
                 updateProgress("Updating spell range selection...");
                 var loadRanges = (SpellRange)DBCManager.GetInstance().FindDbcForBinding("SpellRange");
                 Range.ThreadSafeIndex = loadRanges.UpdateSpellRangeSelection(uint.Parse(adapter.Query(
-                    $"SELECT `RangeIndex` FROM `{"spell_dbc"}` WHERE `ID` = '{selectedID}'").Rows[0][0].ToString()));
+                    $"SELECT `RangeIndex` FROM `{Config.SpellTable}` WHERE `ID` = '{selectedID}'").Rows[0][0].ToString()));
 
                 updateProgress("Updating speed, stacks, totems, reagents...");
                 Speed.ThreadSafeText = row["Speed"].ToString();
@@ -2416,7 +2419,7 @@ namespace SpellEditor
 
                 updateProgress("Updating item class selection...");
                 int ID = int.Parse(adapter.Query(
-                    $"SELECT `EquippedItemClass` FROM `{"spell_dbc"}` WHERE `ID` = '{selectedID}'").Rows[0][0].ToString());
+                    $"SELECT `EquippedItemClass` FROM `{Config.SpellTable}` WHERE `ID` = '{selectedID}'").Rows[0][0].ToString());
                 if (ID == -1)
                 {
                     EquippedItemClass.ThreadSafeIndex = 0;
@@ -2502,7 +2505,7 @@ namespace SpellEditor
 
                 updateProgress("Updating radius index...");
                 var loadRadiuses = (SpellRadius)DBCManager.GetInstance().FindDbcForBinding("SpellRadius");
-                var result = adapter.Query($"SELECT `EffectRadiusIndex1`, `EffectRadiusIndex2`, `EffectRadiusIndex3` FROM `{"spell_dbc"}` WHERE `ID` = '{selectedID}'").Rows[0];
+                var result = adapter.Query($"SELECT `EffectRadiusIndex1`, `EffectRadiusIndex2`, `EffectRadiusIndex3` FROM `{Config.SpellTable}` WHERE `ID` = '{selectedID}'").Rows[0];
                 uint[] IDs = { uint.Parse(result[0].ToString()), uint.Parse(result[1].ToString()), uint.Parse(result[2].ToString()) };
                 RadiusIndex1.ThreadSafeIndex = loadRadiuses.UpdateRadiusIndexes(IDs[0]);
                 RadiusIndex2.ThreadSafeIndex = loadRadiuses.UpdateRadiusIndexes(IDs[1]);
@@ -2618,7 +2621,7 @@ namespace SpellEditor
                 {
                     updateProgress("Updating totem categories & load area groups...");
                     var loadTotemCategories = (TotemCategory)DBCManager.GetInstance().FindDbcForBinding("TotemCategory");
-                    result = adapter.Query($"SELECT `TotemCategory1`, `TotemCategory2` FROM `{"spell_dbc"}` WHERE `ID` = '{selectedID}'").Rows[0];
+                    result = adapter.Query($"SELECT `TotemCategory1`, `TotemCategory2` FROM `{Config.SpellTable}` WHERE `ID` = '{selectedID}'").Rows[0];
                     IDs = new[] { uint.Parse(result[0].ToString()), uint.Parse(result[1].ToString()) };
                     TotemCategory1.ThreadSafeIndex = loadTotemCategories.UpdateTotemCategoriesSelection(IDs[0]);
                     TotemCategory2.ThreadSafeIndex = loadTotemCategories.UpdateTotemCategoriesSelection(IDs[1]);
@@ -2629,7 +2632,7 @@ namespace SpellEditor
                 {
                     var loadAreaGroups = (AreaGroup)DBCManager.GetInstance().FindDbcForBinding("AreaGroup");
                     AreaGroup.ThreadSafeIndex = loadAreaGroups.UpdateAreaGroupSelection(uint.Parse(adapter.Query(
-                        $"SELECT `AreaGroupID` FROM `{"spell_dbc"}` WHERE `ID` = '{selectedID}'").Rows[0][0].ToString()));
+                        $"SELECT `AreaGroupID` FROM `{Config.SpellTable}` WHERE `ID` = '{selectedID}'").Rows[0][0].ToString()));
                 }
                 AreaGroup.IsEnabled = isWotlkOrGreater;
 
@@ -2662,7 +2665,7 @@ namespace SpellEditor
                     updateProgress("Updating rune costs...");
                     var loadRuneCosts = (SpellRuneCost)DBCManager.GetInstance().FindDbcForBinding("SpellRuneCost");
                     RuneCost.ThreadSafeIndex = loadRuneCosts.UpdateSpellRuneCostSelection(uint.Parse(adapter.Query(
-                        $"SELECT `RuneCostID` FROM `{"spell_dbc"}` WHERE `ID` = '{selectedID}'").Rows[0][0].ToString()));
+                        $"SELECT `RuneCostID` FROM `{Config.SpellTable}` WHERE `ID` = '{selectedID}'").Rows[0][0].ToString()));
                 }
                 RuneCost.IsEnabled = isWotlkOrGreater;
 
@@ -2684,10 +2687,10 @@ namespace SpellEditor
                     var loadDifficulties = (SpellDifficulty)DBCManager.GetInstance().FindDbcForBinding("SpellDifficulty");
                     var loadDescriptionVariables = (SpellDescriptionVariables)DBCManager.GetInstance().FindDbcForBinding("SpellDescriptionVariables");
                     SpellDescriptionVariables.ThreadSafeIndex = loadDescriptionVariables.UpdateSpellDescriptionVariablesSelection(
-                        uint.Parse(adapter.Query($"SELECT `SpellDescriptionVariableID` FROM `{"spell_dbc"}` WHERE `ID` = '{selectedID}'").Rows[0][0].ToString()));
+                        uint.Parse(adapter.Query($"SELECT `SpellDescriptionVariableID` FROM `{Config.SpellTable}` WHERE `ID` = '{selectedID}'").Rows[0][0].ToString()));
 
                     Difficulty.ThreadSafeIndex = loadDifficulties.UpdateDifficultySelection(uint.Parse(adapter.Query(
-                        $"SELECT `SpellDifficultyID` FROM `{"spell_dbc"}` WHERE `ID` = '{selectedID}'").Rows[0][0].ToString()));
+                        $"SELECT `SpellDifficultyID` FROM `{Config.SpellTable}` WHERE `ID` = '{selectedID}'").Rows[0][0].ToString()));
                 }
                 SpellMissileID.IsEnabled = isWotlkOrGreater;
                 SpellDescriptionVariables.IsEnabled = isWotlkOrGreater;
@@ -3875,7 +3878,7 @@ namespace SpellEditor
                 {
                     if (dbcBox.ComboBoxIndex == ((ComboBox)sender).SelectedIndex)
                     {
-                        adapter.Execute($"UPDATE `{"spell_dbc"}` SET `{"RequiresSpellFocus"}` = '{dbcBox.ID}' WHERE `ID` = '{selectedID}'");
+                        adapter.Execute($"UPDATE `{Config.SpellTable}` SET `{"RequiresSpellFocus"}` = '{dbcBox.ID}' WHERE `ID` = '{selectedID}'");
                         break;
                     }
                 }
@@ -3888,7 +3891,7 @@ namespace SpellEditor
                 {
                     if (dbcBox.ComboBoxIndex == ((ComboBox)sender).SelectedIndex)
                     {
-                        adapter.Execute($"UPDATE `{"spell_dbc"}` SET `{"AreaGroupID"}` = '{dbcBox.ID}' WHERE `ID` = '{selectedID}'");
+                        adapter.Execute($"UPDATE `{Config.SpellTable}` SET `{"AreaGroupID"}` = '{dbcBox.ID}' WHERE `ID` = '{selectedID}'");
                         break;
                     }
                 }
@@ -3901,7 +3904,7 @@ namespace SpellEditor
                 {
                     if (dbcBox.ComboBoxIndex == ((ComboBox)sender).SelectedIndex)
                     {
-                        adapter.Execute($"UPDATE `{"spell_dbc"}` SET `{"Category"}` = '{dbcBox.ID}' WHERE `ID` = '{selectedID}'");
+                        adapter.Execute($"UPDATE `{Config.SpellTable}` SET `{"Category"}` = '{dbcBox.ID}' WHERE `ID` = '{selectedID}'");
                         break;
                     }
                 }
@@ -3914,7 +3917,7 @@ namespace SpellEditor
                 {
                     if (dbcBox.ComboBoxIndex == ((ComboBox)sender).SelectedIndex)
                     {
-                        adapter.Execute($"UPDATE `{"spell_dbc"}` SET `{"Dispel"}` = '{dbcBox.ID}' WHERE `ID` = '{selectedID}'");
+                        adapter.Execute($"UPDATE `{Config.SpellTable}` SET `{"Dispel"}` = '{dbcBox.ID}' WHERE `ID` = '{selectedID}'");
                         break;
                     }
                 }
@@ -3927,7 +3930,7 @@ namespace SpellEditor
                 {
                     if (dbcBox.ComboBoxIndex == ((ComboBox)sender).SelectedIndex)
                     {
-                        adapter.Execute($"UPDATE `{"spell_dbc"}` SET `{"Mechanic"}` = '{dbcBox.ID}' WHERE `ID` = '{selectedID}'");
+                        adapter.Execute($"UPDATE `{Config.SpellTable}` SET `{"Mechanic"}` = '{dbcBox.ID}' WHERE `ID` = '{selectedID}'");
                         break;
                     }
                 }
@@ -3940,7 +3943,7 @@ namespace SpellEditor
                 {
                     if (dbcBox.ComboBoxIndex == ((ComboBox)sender).SelectedIndex)
                     {
-                        adapter.Execute($"UPDATE `{"spell_dbc"}` SET `{"CastingTimeIndex"}` = '{dbcBox.ID}' WHERE `ID` = '{selectedID}'");
+                        adapter.Execute($"UPDATE `{Config.SpellTable}` SET `{"CastingTimeIndex"}` = '{dbcBox.ID}' WHERE `ID` = '{selectedID}'");
                         break;
                     }
                 }
@@ -3953,7 +3956,7 @@ namespace SpellEditor
                 {
                     if (dbcBox.ComboBoxIndex == ((ComboBox)sender).SelectedIndex)
                     {
-                        adapter.Execute($"UPDATE `{"spell_dbc"}` SET `{"DurationIndex"}` = '{dbcBox.ID}' WHERE `ID` = '{selectedID}'");
+                        adapter.Execute($"UPDATE `{Config.SpellTable}` SET `{"DurationIndex"}` = '{dbcBox.ID}' WHERE `ID` = '{selectedID}'");
                         break;
                     }
                 }
@@ -3966,7 +3969,7 @@ namespace SpellEditor
                 {
                     if (dbcBox.ComboBoxIndex == ((ComboBox)sender).SelectedIndex)
                     {
-                        adapter.Execute($"UPDATE `{"spell_dbc"}` SET `{"SpellDifficultyID"}` = '{dbcBox.ID}' WHERE `ID` = '{selectedID}'");
+                        adapter.Execute($"UPDATE `{Config.SpellTable}` SET `{"SpellDifficultyID"}` = '{dbcBox.ID}' WHERE `ID` = '{selectedID}'");
                         break;
                     }
                 }
@@ -3979,7 +3982,7 @@ namespace SpellEditor
                 {
                     if (dbcBox.ComboBoxIndex == ((ComboBox)sender).SelectedIndex)
                     {
-                        adapter.Execute($"UPDATE `{"spell_dbc"}` SET `{"RangeIndex"}` = '{dbcBox.ID}' WHERE `ID` = '{selectedID}'");
+                        adapter.Execute($"UPDATE `{Config.SpellTable}` SET `{"RangeIndex"}` = '{dbcBox.ID}' WHERE `ID` = '{selectedID}'");
                         break;
                     }
                 }
@@ -3992,7 +3995,7 @@ namespace SpellEditor
                 {
                     if (dbcBox.ComboBoxIndex == ((ComboBox)sender).SelectedIndex)
                     {
-                        adapter.Execute($"UPDATE `{"spell_dbc"}` SET `{"EffectRadiusIndex1"}` = '{dbcBox.ID}' WHERE `ID` = '{selectedID}'");
+                        adapter.Execute($"UPDATE `{Config.SpellTable}` SET `{"EffectRadiusIndex1"}` = '{dbcBox.ID}' WHERE `ID` = '{selectedID}'");
                         break;
                     }
                 }
@@ -4005,7 +4008,7 @@ namespace SpellEditor
                 {
                     if (dbcBox.ComboBoxIndex == ((ComboBox)sender).SelectedIndex)
                     {
-                        adapter.Execute($"UPDATE `{"spell_dbc"}` SET `{"EffectRadiusIndex2"}` = '{dbcBox.ID}' WHERE `ID` = '{selectedID}'");
+                        adapter.Execute($"UPDATE `{Config.SpellTable}` SET `{"EffectRadiusIndex2"}` = '{dbcBox.ID}' WHERE `ID` = '{selectedID}'");
                         break;
                     }
                 }
@@ -4018,7 +4021,7 @@ namespace SpellEditor
                 {
                     if (dbcBox.ComboBoxIndex == ((ComboBox)sender).SelectedIndex)
                     {
-                        adapter.Execute($"UPDATE `{"spell_dbc"}` SET `{"EffectRadiusIndex3"}` = '{dbcBox.ID}' WHERE `ID` = '{selectedID}'");
+                        adapter.Execute($"UPDATE `{Config.SpellTable}` SET `{"EffectRadiusIndex3"}` = '{dbcBox.ID}' WHERE `ID` = '{selectedID}'");
                         break;
                     }
                 }
@@ -4042,7 +4045,7 @@ namespace SpellEditor
 
                     if (dbcBox.ComboBoxIndex == ((ComboBox)sender).SelectedIndex)
                     {
-                        adapter.Execute($"UPDATE `{"spell_dbc"}` SET `{"EquippedItemClass"}` = '{dbcBox.ID}' WHERE `ID` = '{selectedID}'");
+                        adapter.Execute($"UPDATE `{Config.SpellTable}` SET `{"EquippedItemClass"}` = '{dbcBox.ID}' WHERE `ID` = '{selectedID}'");
                         break;
                     }
                 }
@@ -4055,7 +4058,7 @@ namespace SpellEditor
                 {
                     if (dbcBox.ComboBoxIndex == ((ComboBox)sender).SelectedIndex)
                     {
-                        adapter.Execute($"UPDATE `{"spell_dbc"}` SET `{"TotemCategory1"}` = '{dbcBox.ID}' WHERE `ID` = '{selectedID}'");
+                        adapter.Execute($"UPDATE `{Config.SpellTable}` SET `{"TotemCategory1"}` = '{dbcBox.ID}' WHERE `ID` = '{selectedID}'");
                         break;
                     }
                 }
@@ -4068,7 +4071,7 @@ namespace SpellEditor
                 {
                     if (dbcBox.ComboBoxIndex == ((ComboBox)sender).SelectedIndex)
                     {
-                        adapter.Execute($"UPDATE `{"spell_dbc"}` SET `{"TotemCategory2"}` = '{dbcBox.ID}' WHERE `ID` = '{selectedID}'");
+                        adapter.Execute($"UPDATE `{Config.SpellTable}` SET `{"TotemCategory2"}` = '{dbcBox.ID}' WHERE `ID` = '{selectedID}'");
                         break;
                     }
                 }
@@ -4081,7 +4084,7 @@ namespace SpellEditor
                 {
                     if (dbcBox.ComboBoxIndex == ((ComboBox)sender).SelectedIndex)
                     {
-                        adapter.Execute($"UPDATE `{"spell_dbc"}` SET `{"RuneCostID"}` = '{dbcBox.ID}' WHERE `ID` = '{selectedID}'");
+                        adapter.Execute($"UPDATE `{Config.SpellTable}` SET `{"RuneCostID"}` = '{dbcBox.ID}' WHERE `ID` = '{selectedID}'");
                         break;
                     }
                 }
@@ -4094,7 +4097,7 @@ namespace SpellEditor
                 {
                     if (dbcBox.ComboBoxIndex == ((ComboBox)sender).SelectedIndex)
                     {
-                        adapter.Execute($"UPDATE `{"spell_dbc"}` SET `{"SpellDescriptionVariableID"}` = '{dbcBox.ID}' WHERE `ID` = '{selectedID}'");
+                        adapter.Execute($"UPDATE `{Config.SpellTable}` SET `{"SpellDescriptionVariableID"}` = '{dbcBox.ID}' WHERE `ID` = '{selectedID}'");
                         break;
                     }
                 }
@@ -4160,7 +4163,7 @@ namespace SpellEditor
             }
         }
 
-        public DataRow GetSpellRowById(uint spellId) => adapter.Query($"SELECT * FROM `{"spell_dbc"}` WHERE `ID` = '{spellId}' LIMIT 1").Rows[0];
+        public DataRow GetSpellRowById(uint spellId) => adapter.Query($"SELECT * FROM `{Config.SpellTable}` WHERE `ID` = '{spellId}' LIMIT 1").Rows[0];
 
         public string GetSpellNameById(uint spellId)
         {

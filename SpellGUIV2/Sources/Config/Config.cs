@@ -66,6 +66,15 @@ namespace SpellEditor.Sources.Config
                 Save();
             }
         }
+        public static string SpellTable
+        {
+            get { return GetConfigValue("MySQL/SpellTable"); }
+            set
+            {
+                UpdateConfigValue("MySQL/SpellTable", value);
+                Save();
+            }
+        }
         public static string BindingsDirectory
         {
             get { return GetConfigValue("BindingsDirectory"); }
